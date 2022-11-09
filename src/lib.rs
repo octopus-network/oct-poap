@@ -11,7 +11,7 @@ use near_contract_standards::non_fungible_token::{NonFungibleToken, Token, Token
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{LazyOption, LookupMap, UnorderedMap, UnorderedSet, Vector};
 use near_sdk::json_types::U128;
-use near_sdk::Promise;
+use near_sdk::{env, Balance, Promise, StorageUsage};
 use near_sdk::{log, AccountId, PromiseOrValue};
 use near_sdk::{near_bindgen, BorshStorageKey, PanicOnDefault};
 
@@ -42,11 +42,9 @@ pub struct Contract {
     activities: UnorderedMap<ActivityId, ActivityCreatorId>,
     activity_tokens: LookupMap<ActivityId, UnorderedSet<TokenId>>,
     token_activity: LookupMap<TokenId, ActivityId>,
-    activities_by_creators: LookupMap<ActivityCreatorId, Vector<ActivityId>>,
+    activities_by_creators: LookupMap<ActivityCreatorId, Vec<ActivityId>>,
     activity_token_metadata: LookupMap<ActivityId, TokenMetadata>,
 }
-
-near_contract_standards::impl_non_fungible_token_approval!(Contract, token);
 
 #[near_bindgen]
 impl Contract {
@@ -83,6 +81,26 @@ impl Contract {
             .get(&token_id)
             // if token exist then use activity token metadata as token's metadata
             .and_then(|activity_id| self.activity_token_metadata.get(&activity_id))
+    }
+
+    /// Check how much storage taken costs and refund the left over back.
+    pub(crate) fn internal_check_storage(&self, prev_storage: StorageUsage) {
+        let storage_cost = env::storage_usage()
+            .checked_sub(prev_storage)
+            .unwrap_or_default() as Balance
+            * env::storage_byte_cost();
+
+        let refund = env::attached_deposit().checked_sub(storage_cost).expect(
+            format!(
+                "ERR_STORAGE_DEPOSIT need {}, attached {}",
+                storage_cost,
+                env::attached_deposit()
+            )
+            .as_str(),
+        );
+        if refund > 0 {
+            Promise::new(env::predecessor_account_id()).transfer(refund);
+        }
     }
 }
 

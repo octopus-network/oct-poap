@@ -1,6 +1,7 @@
 use crate::interfaces::View;
 use crate::*;
 
+#[near_bindgen]
 impl View for Contract {
     fn get_creator_whitelist(&self) -> Vec<AccountId> {
         self.creator_whitelist.iter().collect()
@@ -14,7 +15,7 @@ impl View for Contract {
         self.activities_by_creators
             .get(&creator_id)
             .map(|ids| {
-                ids.iter()
+                ids.into_iter()
                     .map(|id| (id, self.activity_token_metadata.get(&id).unwrap()))
                     .collect()
             })
@@ -29,13 +30,13 @@ impl View for Contract {
 
     fn get_activities(
         &self,
-        from_index: u32,
-        limit: u32,
+        from_index: Option<u32>,
+        limit: Option<u32>,
     ) -> Vec<(ActivityCreatorId, TokenMetadata)> {
         self.activities
             .iter()
-            .skip(from_index as usize)
-            .take(limit as usize)
+            .skip(from_index.unwrap_or(0) as usize)
+            .take(limit.unwrap_or(100) as usize)
             .map(|(activity_id, activity_creator_id)| {
                 (
                     activity_creator_id,

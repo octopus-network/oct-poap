@@ -11,8 +11,7 @@ impl NonFungibleTokenCore for Contract {
         approval_id: Option<u64>,
         memo: Option<String>,
     ) {
-        self.token
-            .nft_transfer(receiver_id, token_id, approval_id, memo)
+        panic!("Can't transfer this nft!");
     }
 
     fn nft_transfer_call(
@@ -23,8 +22,7 @@ impl NonFungibleTokenCore for Contract {
         memo: Option<String>,
         msg: String,
     ) -> PromiseOrValue<bool> {
-        self.token
-            .nft_transfer_call(receiver_id, token_id, approval_id, memo, msg)
+        panic!("Can't transfer this nft!");
     }
 
     fn nft_token(&self, token_id: TokenId) -> Option<Token> {

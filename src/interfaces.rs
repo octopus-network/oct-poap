@@ -33,7 +33,7 @@ pub trait View {
 
     fn get_activities(
         &self,
-        from_index: u32,
-        limit: u32,
+        from_index: Option<u32>,
+        limit: Option<u32>,
     ) -> Vec<(ActivityCreatorId, TokenMetadata)>;
 }

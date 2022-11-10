@@ -7,7 +7,7 @@ use near_sdk::{env, AccountId};
 #[near_bindgen]
 impl ActivityCreatorAction for Contract {
     #[payable]
-    fn create_activity_token_metadata(&mut self, token_metadata: TokenMetadata) -> ActivityId {
+    fn create_activity(&mut self, token_metadata: TokenMetadata) -> ActivityId {
         let prev_storage = env::storage_usage();
 
         let activity_id = self.assign_activity_id();
@@ -38,7 +38,7 @@ impl ActivityCreatorAction for Contract {
     }
 
     #[payable]
-    fn update_activity_token_metadata(
+    fn update_activity(
         &mut self,
         activity_id: ActivityId,
         token_metadata: TokenMetadata,
@@ -47,7 +47,7 @@ impl ActivityCreatorAction for Contract {
 
         self.activities
             .get(&activity_id)
-            .expect(format!("The activity(#{}) hasn't been created!", activity_id).as_str());
+            .expect(format!("The activity(#{}) hasn't been created!", activity_id.0).as_str());
 
         // The activity should be created before update token metadata.
         // So the old token metadata should be exist.

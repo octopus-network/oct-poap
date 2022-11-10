@@ -4,6 +4,7 @@ use near_contract_standards::non_fungible_token::enumeration::NonFungibleTokenEn
 
 #[near_bindgen]
 impl NonFungibleTokenCore for Contract {
+    #[allow(unused_variables)]
     fn nft_transfer(
         &mut self,
         receiver_id: AccountId,
@@ -14,6 +15,7 @@ impl NonFungibleTokenCore for Contract {
         panic!("Can't transfer this nft!");
     }
 
+    #[allow(unused_variables)]
     fn nft_transfer_call(
         &mut self,
         receiver_id: AccountId,

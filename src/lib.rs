@@ -1,15 +1,14 @@
-mod activity;
 mod impls;
 mod interfaces;
 mod types;
 
-use crate::types::{ActivityCreatorId, ActivityId};
+use crate::types::{ActivityCreatorId, ActivityId, Uuid};
 use near_contract_standards::non_fungible_token::metadata::{
     NFTContractMetadata, NonFungibleTokenMetadataProvider, TokenMetadata,
 };
 use near_contract_standards::non_fungible_token::{NonFungibleToken, Token, TokenId};
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::collections::{LazyOption, LookupMap, UnorderedMap, UnorderedSet, Vector};
+use near_sdk::collections::{LazyOption, LookupMap, UnorderedMap, UnorderedSet};
 use near_sdk::json_types::U128;
 use near_sdk::{env, Balance, Promise, StorageUsage};
 use near_sdk::{log, AccountId, PromiseOrValue};
@@ -27,7 +26,6 @@ enum StorageKey {
     ActivityTokens,
     TokenActivity,
     ActivitiesByCreators,
-    ActivitiesByCreator { creator_id: ActivityCreatorId },
     ActivityTokenMetadata,
 }
 
@@ -35,7 +33,7 @@ enum StorageKey {
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Contract {
     owner: AccountId,
-    activity_id: ActivityId,
+    uuid: Uuid,
     token: NonFungibleToken,
     metadata: LazyOption<NFTContractMetadata>,
     creator_whitelist: UnorderedSet<ActivityCreatorId>,
@@ -52,7 +50,7 @@ impl Contract {
     pub fn new(owner_id: AccountId, metadata: NFTContractMetadata) -> Self {
         let contract = Self {
             owner: owner_id.clone(),
-            activity_id: 0,
+            uuid: 0,
             token: NonFungibleToken::new(
                 StorageKey::NonFungibleToken,
                 owner_id,
@@ -71,9 +69,17 @@ impl Contract {
         contract
     }
 
+    pub(crate) fn assert_owner(&self) {
+        assert_eq!(
+            env::predecessor_account_id(),
+            self.owner,
+            "Owner must be predecessor"
+        );
+    }
+
     pub(crate) fn assign_activity_id(&mut self) -> ActivityId {
-        self.activity_id += 1;
-        self.activity_id
+        self.uuid += 1;
+        self.uuid.into()
     }
 
     pub(crate) fn internal_get_nft_metadata(&self, token_id: &TokenId) -> Option<TokenMetadata> {

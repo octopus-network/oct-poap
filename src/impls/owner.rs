@@ -1,21 +1,13 @@
 use crate::interfaces::OwnerAction;
 use crate::*;
-use near_contract_standards::upgrade::Ownable;
 
 #[near_bindgen]
-impl Ownable for Contract {
-    fn get_owner(&self) -> AccountId {
-        self.owner.clone()
-    }
-
+impl OwnerAction for Contract {
     fn set_owner(&mut self, owner: AccountId) {
         self.assert_owner();
         self.owner = owner;
     }
-}
 
-#[near_bindgen]
-impl OwnerAction for Contract {
     fn set_contract_metadata(&mut self, metadata: NFTContractMetadata) -> bool {
         self.assert_owner();
         self.metadata.set(&metadata)

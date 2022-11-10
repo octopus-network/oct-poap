@@ -3,6 +3,10 @@ use crate::*;
 
 #[near_bindgen]
 impl View for Contract {
+    fn get_owner(&self) -> AccountId {
+        self.owner.clone()
+    }
+
     fn get_creator_whitelist(&self) -> Vec<AccountId> {
         self.creator_whitelist.iter().collect()
     }
@@ -36,7 +40,7 @@ impl View for Contract {
         self.activities
             .iter()
             .skip(from_index.unwrap_or(0) as usize)
-            .take(limit.unwrap_or(100) as usize)
+            .take(limit.unwrap_or(self.activities.len() as u32) as usize)
             .map(|(activity_id, activity_creator_id)| {
                 (
                     activity_creator_id,

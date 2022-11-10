@@ -3,6 +3,8 @@ use near_contract_standards::non_fungible_token::metadata::{NFTContractMetadata,
 use near_sdk::AccountId;
 
 pub trait OwnerAction {
+    fn set_owner(&mut self, owner: AccountId);
+
     fn set_contract_metadata(&mut self, metadata: NFTContractMetadata) -> bool;
 
     fn add_creator_whitelist(&mut self, account_ids: Vec<AccountId>);
@@ -11,9 +13,9 @@ pub trait OwnerAction {
 }
 
 pub trait ActivityCreatorAction {
-    fn create_activity_token_metadata(&mut self, token_metadata: TokenMetadata) -> ActivityId;
+    fn create_activity(&mut self, token_metadata: TokenMetadata) -> ActivityId;
 
-    fn update_activity_token_metadata(
+    fn update_activity(
         &mut self,
         activity_id: ActivityId,
         token_metadata: TokenMetadata,
@@ -23,6 +25,8 @@ pub trait ActivityCreatorAction {
 }
 
 pub trait View {
+    fn get_owner(&self) -> AccountId;
+
     fn get_creator_whitelist(&self) -> Vec<AccountId>;
 
     fn get_activity_token_metadata(&self, activity_id: ActivityId) -> Option<TokenMetadata>;

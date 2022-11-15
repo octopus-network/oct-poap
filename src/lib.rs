@@ -18,12 +18,12 @@ use near_sdk::{near_bindgen, BorshStorageKey, PanicOnDefault};
 enum StorageKey {
     NonFungibleToken,
     Metadata,
-    TokenMetadata,
     Enumeration,
     Approval,
     CreatorWhitelist,
     Activities,
     ActivityTokens,
+    ActivityTokensInner { activity_id: ActivityId },
     TokenActivity,
     ActivitiesByCreators,
     ActivityTokenMetadata,
@@ -54,7 +54,7 @@ impl Contract {
             token: NonFungibleToken::new(
                 StorageKey::NonFungibleToken,
                 owner_id,
-                Some(StorageKey::TokenMetadata),
+                None::<StorageKey>,
                 Some(StorageKey::Enumeration),
                 Some(StorageKey::Approval),
             ),

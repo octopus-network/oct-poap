@@ -1,5 +1,7 @@
-use crate::{ActivityCreatorId, ActivityId};
+use crate::types::ActivityView;
+use crate::ActivityId;
 use near_contract_standards::non_fungible_token::metadata::{NFTContractMetadata, TokenMetadata};
+use near_contract_standards::non_fungible_token::TokenId;
 use near_sdk::AccountId;
 
 pub trait OwnerAction {
@@ -21,7 +23,7 @@ pub trait ActivityCreatorAction {
         token_metadata: TokenMetadata,
     ) -> TokenMetadata;
 
-    fn nft_mint(&mut self, activity_id: u32, nft_owner_ids: Vec<AccountId>);
+    fn nft_mint(&mut self, activity_id: ActivityId, nft_owner_ids: Vec<AccountId>);
 }
 
 pub trait View {
@@ -31,13 +33,11 @@ pub trait View {
 
     fn get_activity_token_metadata(&self, activity_id: ActivityId) -> Option<TokenMetadata>;
 
-    fn get_creator_activities(&self, creator_id: AccountId) -> Vec<(ActivityId, TokenMetadata)>;
+    fn get_creator_activities(&self, creator_id: AccountId) -> Vec<ActivityView>;
 
-    fn get_activity(&self, activity_id: ActivityId) -> Option<(ActivityCreatorId, TokenMetadata)>;
+    fn get_activity(&self, activity_id: ActivityId) -> Option<ActivityView>;
 
-    fn get_activities(
-        &self,
-        from_index: Option<u32>,
-        limit: Option<u32>,
-    ) -> Vec<(ActivityCreatorId, TokenMetadata)>;
+    fn get_activities(&self, from_index: Option<u32>, limit: Option<u32>) -> Vec<ActivityView>;
+
+    fn get_nft_metadata(&self, token_id: TokenId) -> Option<TokenMetadata>;
 }

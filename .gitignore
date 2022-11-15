@@ -2,7 +2,6 @@
 .VSCodeCounter
 
 /target
-/Cargo.lock
 
 /out
 /res/

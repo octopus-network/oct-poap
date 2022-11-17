@@ -68,6 +68,12 @@ impl NonFungibleTokenEnumeration for Contract {
     ) -> Vec<Token> {
         self.token
             .nft_tokens_for_owner(account_id, from_index, limit)
+            .into_iter()
+            .map(|mut token| {
+                token.metadata = self.internal_get_nft_metadata(&token.token_id);
+                token
+            })
+            .collect()
     }
 }
 

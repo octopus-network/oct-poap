@@ -1,6 +1,7 @@
 use crate::interfaces::View;
 use crate::types::ActivityView;
 use crate::*;
+use std::process::id;
 
 #[near_bindgen]
 impl View for Contract {
@@ -29,7 +30,11 @@ impl View for Contract {
 
     fn get_activity(&self, activity_id: ActivityId) -> Option<ActivityView> {
         self.activities.get(&activity_id).and_then(|creator_id| {
-            let nft_ids = self.activity_tokens.get(&activity_id).unwrap().to_vec();
+            let nft_ids = self
+                .activity_tokens
+                .get(&activity_id)
+                .map(|ids| ids.to_vec())
+                .unwrap_or(vec![]);
             let ids = nft_ids
                 .iter()
                 .map(|token_id| self.token.owner_by_id.get(&token_id).unwrap())

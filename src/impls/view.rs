@@ -1,7 +1,6 @@
 use crate::interfaces::View;
 use crate::types::ActivityView;
 use crate::*;
-use std::process::id;
 
 #[near_bindgen]
 impl View for Contract {

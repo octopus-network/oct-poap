@@ -115,7 +115,6 @@ mod tests {
     use near_contract_standards::non_fungible_token::core::NonFungibleTokenCore;
     use near_sdk::test_utils::{accounts, VMContextBuilder};
     use near_sdk::testing_env;
-    use std::collections::HashMap;
 
     use super::*;
 

@@ -3,7 +3,6 @@ use near_contract_standards::non_fungible_token::TokenId;
 use near_sdk::json_types::U64;
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::AccountId;
-use near_sdk::serde::de::Unexpected::Option;
 
 pub type ActivityCreatorId = AccountId;
 pub type Uuid = u64;
@@ -17,11 +16,4 @@ pub struct ActivityView {
     pub token_metadata: TokenMetadata,
     pub ids: Vec<AccountId>,
     pub nft_ids: Vec<TokenId>,
-}
-
-fn test() {
-    let option = Option::Some(1);
-    let a = n>10;
-
-    option.map(|n| n>10).unwrap_or(true);
 }

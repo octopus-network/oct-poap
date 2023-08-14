@@ -40,4 +40,6 @@ pub trait View {
     fn get_activities(&self, from_index: Option<u32>, limit: Option<u32>) -> Vec<ActivityView>;
 
     fn get_nft_metadata(&self, token_id: TokenId) -> Option<TokenMetadata>;
+
+    fn contains_nft(&self, activity_id: ActivityId, nft_owner: AccountId) -> bool;
 }

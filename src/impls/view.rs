@@ -1,3 +1,7 @@
+use std::collections::HashSet;
+
+use near_contract_standards::non_fungible_token::core::NonFungibleTokenCore;
+
 use crate::interfaces::View;
 use crate::types::ActivityView;
 use crate::*;
@@ -60,5 +64,16 @@ impl View for Contract {
 
     fn get_nft_metadata(&self, token_id: TokenId) -> Option<TokenMetadata> {
         self.internal_get_nft_metadata(&token_id)
+    }
+
+    fn contains_nft(&self, activity_id: ActivityId, nft_owner_id: AccountId) -> bool {
+        let nft_token_id = format!("{}:{}", activity_id.0, nft_owner_id).to_string();
+        self.token
+            .tokens_per_owner
+            .as_ref()
+            .unwrap()
+            .get(&nft_owner_id)
+            .unwrap()
+            .contains(&nft_token_id)
     }
 }
